@@ -1,0 +1,25 @@
+mysqld:
+  image: mysql
+  ports:
+   - "3306:3306"
+  environment:
+    MYSQL_ROOT_PASSWORD: mysql
+
+app:
+  build: .
+  #command: "rake db:create db:migrate db:seed && puma -e $RAILS_ENV --preload -t $THREAD -w $WORKER"
+  ports:
+   - "9292:9292"
+  environment:
+    THREAD: '2:8'
+    WORKER: 1
+    DATABASE_URL: mysql2://root:mysql@192.168.99.100/rails_docker_sample
+  links:
+    - mysqld
+
+web:
+  image: nginx
+  ports:
+   - '80:80'
+  links:
+    - app
